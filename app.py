@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_debugtoolbar import DebugToolbarExtension
 import uuid
 import jwt
 import datetime
@@ -12,9 +13,14 @@ TOKEN_EXP_TIME = 15
 
 app = Flask(__name__)
 
+# the toolbar is only enabled in debug mode:
+app.debug = True
+
 app.config['SECRET_KEY'] = 'Th1s1ss3cr3t'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+toolbar = DebugToolbarExtension(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -45,7 +51,7 @@ def token_required(f):
 
 @app.route('/')
 def hello():
-    return 'Hello'
+    return "<html><body>hello</body></html>"
 
 
 @app.route('/register', methods=['GET', 'POST'])
