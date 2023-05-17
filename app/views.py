@@ -1,6 +1,4 @@
-from flask import Flask, request, jsonify, make_response
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask import request, jsonify, make_response
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_debugtoolbar import DebugToolbarExtension
@@ -8,25 +6,9 @@ import uuid
 import jwt
 import datetime
 from functools import wraps
+from app import app
+from app.models import Users, Profiles
 
-TOKEN_EXP_TIME = 15
-
-app = Flask(__name__)
-
-# the toolbar is only enabled in debug mode:
-app.debug = True
-
-app.config['SECRET_KEY'] = 'Th1s1ss3cr3t'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db' 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-
-toolbar = DebugToolbarExtension(app)
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-db.init_app(app)
-
-from models import *
 
 def token_required(f):
     @wraps(f)
@@ -89,7 +71,3 @@ def login_user():
 @token_required
 def get_user(current_user):
     return jsonify({'balance': current_user.balance})
-
-
-if __name__ == '__main__':
-    app.run()

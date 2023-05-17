@@ -1,4 +1,5 @@
 from app import db
+from app.database import db
 
 
 class Users(db.Model):
@@ -11,9 +12,8 @@ class Users(db.Model):
     balance = db.Column(db.Integer)
     email = db.Column(db.String(50))
 
-'''
+
 class Profiles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     balance = db.Column(db.Integer)
     email = db.Column(db.String(50))
-'''
