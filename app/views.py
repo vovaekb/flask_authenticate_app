@@ -1,11 +1,11 @@
+import datetime
+import jwt
+import uuid
 from flask import request, jsonify, make_response
 from flask_cors import CORS
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_debugtoolbar import DebugToolbarExtension
-import uuid
-import jwt
-import datetime
 from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from app import app
 from app.models import Users, Profiles
 
@@ -28,6 +28,7 @@ def token_required(f):
             return jsonify({'message': 'token is invalid'})
 
         return f(current_user, *args, **kwargs)
+
     return decorator
 
 
@@ -61,7 +62,9 @@ def login_user():
     user = Users.query.filter_by(name=auth.username).first()
 
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=TOKEN_EXP_TIME)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'public_id': user.public_id,
+                            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=TOKEN_EXP_TIME)},
+                           app.config['SECRET_KEY'])
         return jsonify({'token': token.decode('UTF-8')})
 
     return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
